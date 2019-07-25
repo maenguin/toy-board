@@ -18,6 +18,12 @@ public class APIResDto {
         this(errorCode,new ArrayList());
     }
 
+    public APIResDto(final String message) {
+        this.code = ErrorCode.UNHANDLED_ERROR.getCode();
+        this.message = message;
+        this.result = new ArrayList();
+    }
+
     public APIResDto(final ErrorCode errorCode, final ResponseDto responseDto) {
         this.code = errorCode.getCode();
         this.message = errorCode.getMessage();
@@ -33,13 +39,19 @@ public class APIResDto {
     public static APIResDto of(final ErrorCode errorCode) {
         return new APIResDto(errorCode);
     }
+    public static APIResDto of(final String message) {
+        return new APIResDto(message);
+    }
 
     //성공시
+    public static APIResDto of() {
+        return new APIResDto(ErrorCode.SUCCESS);
+    }
     public static APIResDto of(final ResponseDto responseDto) {
         return new APIResDto(ErrorCode.SUCCESS,responseDto);
     }
     public static APIResDto of(final List body) {
-        return new APIResDto(ErrorCode.SUCCESS,body);
+        return new APIResDto(ErrorCode.SUCCESS,body);//
     }
 
 }

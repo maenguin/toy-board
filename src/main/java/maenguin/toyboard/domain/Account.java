@@ -1,6 +1,7 @@
 package maenguin.toyboard.domain;
 
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -20,6 +21,7 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Email
     @Column(name = "ACCOUNT_EAMIL",unique = true)
     @NotNull
     private String email;
@@ -28,6 +30,7 @@ public class Account {
     @NotNull
     private String password;
 
+    @Builder
     public Account(@NotNull @Email String email, @NotNull String password) {
         this.email = email;
         this.password = password;

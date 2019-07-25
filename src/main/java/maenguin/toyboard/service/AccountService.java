@@ -4,6 +4,9 @@ package maenguin.toyboard.service;
 import lombok.RequiredArgsConstructor;
 import maenguin.toyboard.domain.Account;
 import maenguin.toyboard.dto.account.AccountSaveDto;
+import maenguin.toyboard.dto.account.AccountSignInDto;
+import maenguin.toyboard.enums.ErrorCode;
+import maenguin.toyboard.exception.business.BusinessException;
 import maenguin.toyboard.repository.AccountRepository;
 import org.springframework.stereotype.Service;
 
@@ -16,15 +19,25 @@ public class AccountService {
     private final AccountRepository accountRepository;
 
     @Transactional
-    public boolean signUp(AccountSaveDto accountSaveDto) {
+    public boolean signUp(final AccountSaveDto accountSaveDto) {
 
         if (accountRepository.findByEmail(accountSaveDto.getEmail()).isPresent()){
-            return false;
+            throw new BusinessException(ErrorCode.EMAIL_DUPLICATION);
         }
-        Account account = new Account(accountSaveDto.getEmail(),accountSaveDto.getPassword());
-        accountRepository.save(account);
+        accountRepository.save(accountSaveDto.toEntity());
         return true;
 
+    }
+
+    @Transactional
+    public boolean signIn(final AccountSignInDto accountSignInDto) {
+
+        Account account = accountRepository.findByEmail(accountSignInDto.getEmail()).orElseThrow(() ->new BusinessException(ErrorCode.EMAIL_OR_PASS_NOT_MATCHED));
+
+        if (!account.getPassword().equals(accountSignInDto.getPassword())) {
+            throw new BusinessException(ErrorCode.EMAIL_OR_PASS_NOT_MATCHED);
+        }
+        return true;
     }
 
 }
